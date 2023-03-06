@@ -1,0 +1,16 @@
+type ExecuteEvent @entity {
+  id: ID!
+  blockHeight: BigInt!
+  txHash: String!
+  contractAddress: String!
+  network: String!
+}
+
+type Message @entity {
+  id: ID!
+  blockHeight: BigInt!
+  txHash: String!
+  sender: String!
+  contract: String!
+  network: String!
+}
