@@ -1,44 +1,21 @@
-import { ExecuteEvent, Message } from "../types";
-import {
-  CosmosEvent,
-  CosmosBlock,
-  CosmosMessage,
-  CosmosTransaction,
-} from "@subql/types-cosmos";
+import { Message } from "../types";
+import { CosmosMessage } from "@subql/types-cosmos";
 
-/*
-export async function handleBlock(block: CosmosBlock): Promise<void> {
-  // If you want to index each block in Cosmos (Juno), you could do that here
+//Only allow relevant codeId(s) to pass through
+const isCorrectCodeId = (msg: CosmosMessage) => {
+  return (msg.msg.decodedMsg.codeId.low &&  msg.msg.decodedMsg.codeId.low === 1)
 }
-export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
-  // If you want to index each transaction in Cosmos (Juno), you could do that here
-  const transactionRecord = Transaction.create({
-    id: tx.hash,
-    blockHeight: BigInt(tx.block.block.header.height),
-    timestamp: tx.block.block.header.time,
-  });
-  await transactionRecord.save();
-}
-*/
 
-export async function handleMessage(msg: CosmosMessage): Promise<void> {
+//save data to Message entity in db
+export const handleMessage = async (msg: CosmosMessage): Promise<void> => {
+  if (!isCorrectCodeId(msg)) return;
   const messageRecord = Message.create({
-    id: `${msg.tx.hash}-${msg.idx}`,
-    blockHeight: BigInt(msg.block.block.header.height),
+    id: `${msg.tx.block.block.id}-${msg.tx.idx}`,
+    blockHeight: BigInt(msg.tx.block.block.header.height),
     txHash: msg.tx.hash,
-    sender: msg.msg.decodedMsg.sender,
-    contract: msg.msg.decodedMsg.contract,
+    name: msg.msg.decodedMsg.msg.name,
+    symbol: msg.msg.decodedMsg.msg.symbol,
+    decimals: msg.msg.decodedMsg.msg.decimals,
   });
   await messageRecord.save();
-}
-
-export async function handleEvent(event: CosmosEvent): Promise<void> {
-  const eventRecord = ExecuteEvent.create({
-    id: `${event.tx.hash}-${event.msg.idx}-${event.idx}`,
-    blockHeight: BigInt(event.block.block.header.height),
-    txHash: event.tx.hash,
-    contractAddress: event.event.attributes.find(attr => attr.key === '_contract_address').value
-  });
-
-  await eventRecord.save();
 }

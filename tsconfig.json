@@ -14,5 +14,5 @@
   "include": [
     "src/**/*",
     "node_modules/@subql/types-cosmos/dist/global.d.ts"
-  ]
+, "src/interfaces/interfaces.ts"  ]
 }

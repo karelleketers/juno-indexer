@@ -86,7 +86,7 @@ This will download packages from Docker, create a new Postgres database, and sta
 
 #### 2. Query this Project
 
-Open your browser and head to `http://localhost:3000`.
+Open your browser and head to `http://localhost:3001`.
 
 Finally, you should see a GraphQL playground is showing in the explorer and the schemas that ready to query. On the right hand side is a documentation button that shows you what models you have to construct queries.
 
@@ -95,21 +95,14 @@ With this project can try to query with the following code to get a taste of how
 ```graphql
 {
   query {
-    executeEvents(first: 5) {
-      nodes {
-        id
-        blockHeight
-        txHash
-        contractAddress
-      }
-    }
     messages(first: 5) {
       nodes {
         id
         blockHeight
         txHash
-        sender
-        contract
+        name
+        symbol
+        decimals
       }
     }
   }

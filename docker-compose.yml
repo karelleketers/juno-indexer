@@ -32,9 +32,9 @@ services:
     volumes:
       - ./:/app
     command:
-      - -f=/app/project-juno.yaml
+      - -f=/app/project.yaml
       - --db-schema=app
-      - --disable-historical
+      - --disable-historical=false
     healthcheck:
       test: ["CMD", "curl", "-f", "http://subquery-node-juno:3000/ready"]
       interval: 3s
