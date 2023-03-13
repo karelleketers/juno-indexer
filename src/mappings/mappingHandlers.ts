@@ -1,9 +1,10 @@
 import { Message } from "../types";
 import { CosmosMessage } from "@subql/types-cosmos";
+import { CODE_ID } from "../utils";
 
 //Only allow relevant codeId(s) to pass through
 const isCorrectCodeId = (msg: CosmosMessage) => {
-  return (msg.msg.decodedMsg.codeId.low &&  msg.msg.decodedMsg.codeId.low === 1)
+  return (msg.msg.decodedMsg.codeId.low &&  msg.msg.decodedMsg.codeId.low in CODE_ID)
 }
 
 //save data to Message entity in db
