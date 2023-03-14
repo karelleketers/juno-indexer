@@ -6,6 +6,8 @@
   "scripts": {
     "build": "subql build",
     "codegen": "subql codegen",
+    "codegen:event": "yarn codegen --file project-event.yaml",
+    "codegen:msg": "yarn codegen --file project-message.yaml",
     "start:docker": "docker-compose pull && docker-compose up --remove-orphans",
     "dev": "subql codegen && subql build && docker-compose pull && docker-compose up --remove-orphans",
     "prepack": "rm -rf dist && npm run build",
