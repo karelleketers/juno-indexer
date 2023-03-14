@@ -1,0 +1,46 @@
+specVersion: 1.0.0
+name: juno-subql-starter
+version: 0.0.1
+runner:
+  node:
+    name: "@subql/node-cosmos"
+    version: "*"
+  query:
+    name: "@subql/query"
+    version: "*"
+description: >-
+  This project can be use as a starting point for developing your Cosmos (Juno) based SubQuery project
+repository: https://github.com/subquery/juno-subql-starter
+schema:
+  file: ./schema.graphql
+
+network:
+  chainId: juno-1
+  # This endpoint must be a public non-pruned archive node
+  # Public nodes may be rate limited, which can affect indexing speed
+  # When developing your project we suggest getting a private API key
+  # You can get them from OnFinality for free https://app.onfinality.io
+  # https://documentation.onfinality.io/support/the-enhanced-api-service
+  endpoint: https://rpc-archive.junonetwork.io/
+  # Optionally provide the HTTP endpoint of a full chain dictionary to speed up processing
+  dictionary: https://api.subquery.network/sq/subquery/cosmos-juno-dictionary
+  # chainTypes: # This is a beta feature that allows support for any Cosmos chain by importing the correct protobuf messages
+  #  cosmos.slashing.v1beta1:
+  #    file: "./proto/cosmos/slashing/v1beta1/tx.proto"
+  #    messages:
+  #     - "MsgUnjail"
+dataSources:
+  - kind: cosmos/Runtime
+    startBlock: 4598860 # first block on the fourth iteration of juno
+    mapping:
+      file: "./dist/index.js"
+      handlers:
+        - handler: handleEvent
+          kind: cosmos/EventHandler
+          filter:
+            type: execute
+            messageFilter:
+              type: "/cosmwasm.wasm.v1.MsgExecuteContract"
+              # contractCall field can be specified here too
+              #values: # A set of key/value pairs that are present in the message data
+              #contract: "juno1v99ehkuetkpf0yxdry8ce92yeqaeaa7lyxr2aagkesrw67wcsn8qxpxay0"
