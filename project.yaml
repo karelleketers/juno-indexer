@@ -31,11 +31,20 @@ network:
   #     - "MsgUnjail"
 dataSources:
   - kind: cosmos/Runtime
-    startBlock: 4598860 # first block on the fourth iteration of juno
+    startBlock: 4864750 # first block on the fourth iteration of juno
     mapping:
       file: "./dist/index.js"
       handlers:
-        - handler: handleMessage
-          kind: cosmos/MessageHandler
+        - handler: handleInstantiateEvent
+          kind: cosmos/EventHandler
           filter:
-            type: "/cosmwasm.wasm.v1.MsgInstantiateContract"
+            type: instantiate
+            messageFilter:
+              type: "/cosmwasm.wasm.v1.MsgInstantiateContract"
+        - handler: handleExecuteEvent
+          kind: cosmos/EventHandler
+          filter:
+            type: execute
+            messageFilter:
+              type: "/cosmwasm.wasm.v1.MsgExecuteContract"
+              contractCall: "transfer"

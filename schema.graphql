@@ -2,20 +2,12 @@
 # Add the `@index` or `@index(unique: true)` annotation after any non-key field
 # https://academy.subquery.network/build/graphql.html#indexing-by-non-primary-key-field
 
-type Message @entity {
-  id: ID!
-  blockHeight: BigInt!
-  txHash: String!
-  name: String!
-  symbol: String!
-  decimals: Int!
-}
-
 type Token @entity {
   id: ID!
 
+  #Bytes
   """ Token address """
-  address: Bytes!
+  address: String! @index(unique: true)
 
   """ Number of decimals the token uses """
   decimals: Int!
@@ -26,32 +18,26 @@ type Token @entity {
   """ Symbol of the token """
   symbol: String!
 
-  """ Token description """
-  description: String
+  #Bytes
+  """ Address of source account """
+  source: String!
 
-  """ Image URL """
-  imageUrl: String
+  #""" Token description """
+  #description: String
 
-  """ Token flags """
-  flags: [String!]!
+  #""" Image URL """
+  #imageUrl: String
 
-  """ Total number of events (all types)"""
-  eventCount: BigInt!
+  #""" Token flags """
+  #flags: [String!]!
 
+  #BigInt
   """ Total number of transfer events """
-  transferEventCount: BigInt!
+  transferEventCount: Int!
 
   #TODO: BigDecimal Custom Scalar
   """ Total token supply """
   totalSupply: String!
-
-  #TODO: BigDecimal Custom Scalar
-  """ Total token burned """
-  totalBurned: String!
-
-  #TODO: BigDecimal Custom Scalar
-  """ Total token minted """
-  totalMinted: String!
 
   #TODO: BigDecimal Custom Scalar
   """ Total token transferred """
@@ -69,25 +55,27 @@ type TransferEvent @entity {
   token: Token!
 
   #TODO: BigDecimal Custom Scalar
-  """Quantity of tokens transferred """
+  """ Quantity of tokens transferred """
   amount: String!
 
+  #Bytes
   """ Transaction sender address """
-  sender: Bytes!
+  sender: String!
 
-  """Address of source account """
-  source: Bytes!
+  #Bytes
+  """ Address of destination account"""
+  destination: String!
 
-  """Address of destination account"""
-  destination: Bytes!
-
+  #BigInt
   """ Block number/ Block Height """
-  block: BigInt!
+  block: Int!
 
+  #BigInt
   """ Event timestamp """
-  timestamp: BigInt!
+  timestamp: String!
 
+  #Bytes
   """ Transaction hash """
-  transaction: Bytes!
+  transaction: String!
   
 }
