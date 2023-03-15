@@ -1,24 +1,28 @@
 {
-  "name": "juno-test",
+  "name": "@abstract-os/cw20-subgraph",
   "version": "0.0.1",
-  "description": "This project can be use as a starting point for developing your Cosmos (Juno) based SubQuery project",
+  "description": "This project indexes events for cw20 tokens and stores them to a database.",
   "main": "dist/index.js",
   "scripts": {
     "build": "subql build",
     "codegen": "subql codegen",
+    "codegen:event": "yarn codegen --file project-event.yaml",
+    "codegen:msg": "yarn codegen --file project-message.yaml",
     "start:docker": "docker-compose pull && docker-compose up --remove-orphans",
     "dev": "subql codegen && subql build && docker-compose pull && docker-compose up --remove-orphans",
     "prepack": "rm -rf dist && npm run build",
     "test": "jest"
   },
-  "homepage": "https://github.com/subquery/cosmos-subql-starter",
-  "repository": "github:subquery/cosmos-subql-starter",
+  "homepage": "https://github.com/Abstract-OS/cw20-subgraph",
+  "repository": "github:Abstract-OS/cw20-subgraph",
   "files": [
     "dist",
     "schema.graphql",
-    "project.yaml"
+    "project.yaml",
+    "project-event.yaml",
+    "project-message.yaml.yaml"
   ],
-  "author": "SubQuery Team + ME",
+  "author": "karelleketers",
   "license": "MIT",
   "devDependencies": {
     "@cosmjs/stargate": "^0.28.9",
