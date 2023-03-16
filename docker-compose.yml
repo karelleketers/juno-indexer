@@ -34,7 +34,7 @@ services:
     command:
       - -f=/app/project.yaml
       - --db-schema=app
-      - --disable-historical=false
+      - --disable-historical=true
 
     healthcheck:
       test: ["CMD", "curl", "-f", "http://subquery-node-juno:3000/ready"]
