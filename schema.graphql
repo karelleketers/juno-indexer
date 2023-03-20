@@ -79,3 +79,82 @@ type TransferEvent @entity {
   transaction: String!
   
 }
+
+#
+# Provides information about an Cosmos account
+#
+type Account @entity {
+  """ Equals to: <accountAddress>"""
+  id: ID!
+
+  #Bytes
+  " Account address "
+  address: String!
+
+  """ Token balances that this account holds """
+  balances: [AccountBalance!]! @derivedFrom(field: "account")
+}
+
+#
+# Current token balance of a particular Cosmos account
+#
+type AccountBalance @entity {
+  """ Equals to: <accountAddress>-<tokenAddress>"""
+  id: ID!
+
+  """ Account address """
+  account: Account!
+
+  """ Token address """
+  token: Token!
+
+  #BigDecimal
+  """ Current account balance """
+  amount: String!
+
+  #BigInt
+  """ Block number in which the balance was last modified """
+  block: Int
+
+  #BigInt
+  """ Last modified timestamp in seconds """
+  modified: String
+
+  #Bytes
+  """ Hash of the last transaction that modified the balance """
+  transaction: String
+}
+
+#
+# Token balance of a particular Ethereum account in a certain timestamp. This entity is used to
+# provide information about evolution of account balances
+#
+type AccountBalanceSnapshot @entity {
+  """ Equals to: <accountAddress>-<tokenAddress>-<timestamp>"""
+  id: ID!
+
+  """ Account address """
+  account: Account!
+
+  """ Token addess """
+  token: Token!
+
+  #BigDecimal
+  """ Account balance """
+  amount: String!
+
+  # TODO: Add description and check if could be non-optional
+  event: TransferEvent
+
+  #BigInt
+  """ Block number """
+  block: Int!
+
+  #BigInt
+  """ Timestamp in seconds """
+  timestamp: String!
+
+  #Bytes
+  """ Transaction hash """
+  transaction: String!
+}
