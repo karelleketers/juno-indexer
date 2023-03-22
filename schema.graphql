@@ -126,7 +126,7 @@ type AccountBalance @entity {
 }
 
 #
-# Token balance of a particular Ethereum account in a certain timestamp. This entity is used to
+# Token balance of a particular Cosmos account in a certain timestamp. This entity is used to
 # provide information about evolution of account balances
 #
 type AccountBalanceSnapshot @entity {
