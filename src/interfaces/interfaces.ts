@@ -1,7 +1,7 @@
-import { TransferEvent } from "../types";
-
-export interface AccountParams {
-    tokenId: string
-    tokenAddress: string
-    transfer: TransferEvent
+export interface ModuleParams {
+    provider: string
+    name: string
+    version: string
+    type: string
+    address: string
 }

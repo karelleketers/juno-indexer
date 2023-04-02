@@ -1,1 +1,1 @@
-export { CODE_ID } from "./codeId/codeId";
+export { ADDRESSES } from "./addresses/address";

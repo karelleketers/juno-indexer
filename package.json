@@ -1,15 +1,14 @@
 {
-  "name": "@abstract-os/cw20-subgraph",
+  "name": "@abstract-os/subquery-indexers",
   "version": "0.0.1",
-  "description": "This project indexes events for cw20 tokens and stores them to a database.",
+  "description": "This project indexes abstract-related events and stores them to a database.",
   "main": "dist/index.js",
   "scripts": {
     "build": "subql build",
     "codegen": "subql codegen",
-    "codegen:event": "yarn codegen --file project-event.yaml",
-    "codegen:msg": "yarn codegen --file project-message.yaml",
     "start:docker": "docker-compose pull && docker-compose up --remove-orphans",
     "dev": "subql codegen && subql build && docker-compose pull && docker-compose up --remove-orphans",
+    "rebuild": "subql build && docker-compose pull && docker-compose up --remove-orphans",
     "prepack": "rm -rf dist && npm run build",
     "test": "jest"
   },
@@ -27,13 +26,18 @@
   "devDependencies": {
     "@cosmjs/stargate": "^0.28.9",
     "@subql/cli": "latest",
+    "@types/jest": "^29.5.0",
+    "jest": "^29.5.0",
     "typescript": "^4.7.4"
   },
   "dependencies": {
     "@subql/types-cosmos": "latest",
     "@terra-money/terra.js": "^3.1.7",
     "@types/node": "^17.0.21",
+    "dockerode": "^3.3.5",
+    "pg": "^8.10.0",
     "pino": "^7.8.0",
+    "supertest": "^6.3.3",
     "ts-proto": "^1.112.1",
     "tslib": "^2.3.1"
   }

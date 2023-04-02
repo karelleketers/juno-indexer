@@ -95,14 +95,22 @@ With this project can try to query with the following code to get a taste of how
 ```graphql
 {
   query {
-    messages(first: 5) {
+    accounts(first: 5) {
       nodes {
         id
-        blockHeight
-        txHash
+        address
+        creator
         name
-        symbol
-        decimals
+        owner
+        manager
+        proxy
+        admin
+        description
+        governanceType
+        fundsDenom,
+        fundsAmount,
+        timestamp,
+        txHash
       }
     }
   }

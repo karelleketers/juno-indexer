@@ -2,159 +2,182 @@
 # Add the `@index` or `@index(unique: true)` annotation after any non-key field
 # https://academy.subquery.network/build/graphql.html#indexing-by-non-primary-key-field
 
-type Token @entity {
-  id: ID!
-
-  #Bytes
-  """ Token address """
-  address: String! @index(unique: true)
-
-  """ Number of decimals the token uses """
-  decimals: Int!
-
-  """ Human-readable name of the token """
-  name: String!
-
-  """ Symbol of the token """
-  symbol: String!
-
-  #Bytes
-  """ Address of source account """
-  source: String!
-
-  #""" Token description """
-  #description: String
-
-  #""" Image URL """
-  #imageUrl: String
-
-  #""" Token flags """
-  #flags: [String!]!
-
-  #BigInt
-  """ Total number of transfer events """
-  transferEventCount: Int!
-
-  #TODO: BigDecimal Custom Scalar
-  """ Total token supply """
-  totalSupply: String!
-
-  #TODO: BigDecimal Custom Scalar
-  """ Total token transferred """
-  totalTransferred: String!
-
-  #""" List of token events """
-  #events: [TokenEvent!]! @derivedFrom(field: "token")
-}
-
-
-type TransferEvent @entity {
-  id: ID!
-
-  """ Token Address """
-  token: Token!
-
-  #TODO: BigDecimal Custom Scalar
-  """ Quantity of tokens transferred """
-  amount: String!
-
-  #Bytes
-  """ Transaction sender address """
-  sender: String!
-
-  #Bytes
-  """ Address of destination account"""
-  destination: String!
-
-  #BigInt
-  """ Block number/ Block Height """
-  block: Int!
-
-  #BigInt
-  """ Event timestamp """
-  timestamp: String!
-
-  #Bytes
-  """ Transaction hash """
-  transaction: String!
-  
-}
-
-#
-# Provides information about an Cosmos account
-#
 type Account @entity {
-  """ Equals to: <accountAddress>"""
   id: ID!
 
-  #Bytes
-  " Account address "
+  """ Contract address """
   address: String!
 
-  """ Token balances that this account holds """
-  balances: [AccountBalance!]! @derivedFrom(field: "account")
-}
+  """ Abstract Account ID """
+  abstractId: String!
 
-#
-# Current token balance of a particular Cosmos account
-#
-type AccountBalance @entity {
-  """ Equals to: <accountAddress>-<tokenAddress>"""
-  id: ID!
+  """ Creator of App """
+  creator: String!
 
-  """ Account address """
-  account: Account!
+  """ Owner of App """
+  owner: String!
 
-  """ Token address """
-  token: Token!
+  """ Manager of App """
+  manager: String! @index(unique: true)
 
-  #BigDecimal
-  """ Current account balance """
-  amount: String!
+  """ Proxy of App """
+  proxy: String!
 
-  #BigInt
-  """ Block number in which the balance was last modified """
-  block: Int
+  """ Admin of App """
+  admin: String!
 
-  #BigInt
-  """ Last modified timestamp in seconds """
-  modified: String
+  """ Name of App """
+  name: String!
 
-  #Bytes
-  """ Hash of the last transaction that modified the balance """
-  transaction: String
-}
+  """ Description of App """
+  description: String
 
-#
-# Token balance of a particular Cosmos account in a certain timestamp. This entity is used to
-# provide information about evolution of account balances
-#
-type AccountBalanceSnapshot @entity {
-  """ Equals to: <accountAddress>-<tokenAddress>-<timestamp>"""
-  id: ID!
+  """ Governance Type of App """
+  governanceType: String!
 
-  """ Account address """
-  account: Account!
+  """ Funds Denomination """
+  fundsDenom: String
 
-  """ Token addess """
-  token: Token!
+  """ Funds Amount """
+  fundsAmount: String
 
-  #BigDecimal
-  """ Account balance """
-  amount: String!
+  """ Transaction Hash """
+  txHash: String!
 
-  # TODO: Add description and check if could be non-optional
-  event: TransferEvent
-
-  #BigInt
-  """ Block number """
-  block: Int!
-
-  #BigInt
-  """ Timestamp in seconds """
+  """ Timestamp of Block when App was created """
   timestamp: String!
+}
 
-  #Bytes
-  """ Transaction hash """
-  transaction: String!
+type Module @entity {
+  id: ID!
+
+  """ sender of the Asset """
+  sender: String!
+
+  """ Provider of the Module """
+  provider: String!
+
+  """ Name of the Module """
+  name: String!
+
+  """ Current Version of the Module """
+  version: String!
+
+  """ Type of the Module """
+  type: String!
+
+  """ Address or code id of the Module """
+  address: String!
+
+  """ Version Control Address of the modules """
+  vcAddress: String
+
+  """ Transaction Hash """
+  txHash: String!
+
+  """ Timestamp of Block when Module Version was last changed """
+  timestamp: String!
+}
+
+type ModuleSnapshot @entity {
+  id: ID!
+  
+  """ sender of the Asset """
+  sender: String!
+
+  """ Provider of the Module """
+  provider: String!
+
+  """ Name of the Module """
+  name: String! @index(unique: true)
+
+  """ Version of the Module """
+  version: String!
+
+  """ Type of the Module """
+  type: String!
+
+  """ Address of the Module """
+  address: String!
+
+  """ Abstract Version Control Address """
+  vcAddress: String
+
+  """ Transaction Hash """
+  txHash: String!
+
+  """ Timestamp of Block when Module was added """
+  timestamp: String!
+}
+
+type AccountModule @entity {
+  id: ID!
+
+  """ Address of the module """
+  address: String!
+
+  """ Name of the module """
+  name: String!
+
+  """ Provider of the module """
+  provider: String
+
+  """ Version of the module """
+  version: String!
+
+  """ Manager address of the module """
+  manager: String!
+
+  """ Account address tied to the module """
+  account: String!
+
+  """ version control address or code id of the module """
+  vcAddress: String!
+
+  """ Sender of module """
+  sender: String!
+  
+  """ Transaction Hash """
+  txHash: String!
+
+  """ Timestamp of Block when Module was added """
+  timestamp: String!
+}
+
+type Asset @entity {
+  id: ID!
+
+  """ sender of the Asset """
+  sender: String!
+
+  """ Source of the Asset """
+  source: String!
+
+  """ Name of the Asset """
+  name: String!
+
+  """ Type of the Asset """
+  type: String!
+
+  """ Address of the Asset """
+  address: String!
+
+  """ ANS Host Address of the Asset """
+  ansHost: String!
+
+  """ Transaction Hash """
+  txHash: String!
+
+  """ Timestamp of Block when Asset was named """
+  timestamp: String!
+}
+
+type Contract @entity {
+  id: ID!
+
+  """ Transaction Hash """
+  txHash: String!
+
+  """ Timestamp of Block when Contract was named """
+  timestamp: String!
 }
