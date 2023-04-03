@@ -12,8 +12,8 @@
     "prepack": "rm -rf dist && npm run build",
     "test": "jest"
   },
-  "homepage": "https://github.com/Abstract-OS/cw20-subgraph",
-  "repository": "github:Abstract-OS/cw20-subgraph",
+  "homepage": "https://github.com/Abstract-OS/subquery-indexers",
+  "repository": "github:Abstract-OS/subquery-indexers",
   "files": [
     "dist",
     "schema.graphql",
