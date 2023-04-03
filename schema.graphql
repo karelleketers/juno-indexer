@@ -11,28 +11,28 @@ type Account @entity {
   """ Abstract Account ID """
   abstractId: String!
 
-  """ Creator of App """
+  """ Creator of Account """
   creator: String!
 
-  """ Owner of App """
+  """ Owner of Account """
   owner: String!
 
-  """ Manager of App """
+  """ Manager of Account """
   manager: String! @index(unique: true)
 
-  """ Proxy of App """
+  """ Proxy of Account """
   proxy: String!
 
-  """ Admin of App """
+  """ Admin of Account """
   admin: String!
 
-  """ Name of App """
+  """ Name of Account """
   name: String!
 
-  """ Description of App """
+  """ Description of Account """
   description: String
 
-  """ Governance Type of App """
+  """ Governance Type of Account """
   governanceType: String!
 
   """ Funds Denomination """
@@ -44,7 +44,7 @@ type Account @entity {
   """ Transaction Hash """
   txHash: String!
 
-  """ Timestamp of Block when App was created """
+  """ Timestamp of Block when Account was created """
   timestamp: String!
 }
 
