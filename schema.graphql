@@ -51,7 +51,7 @@ type Account @entity {
 type Module @entity {
   id: ID!
 
-  """ sender of the Asset """
+  """ sender of the Module """
   sender: String!
 
   """ Provider of the Module """
@@ -82,7 +82,7 @@ type Module @entity {
 type ModuleSnapshot @entity {
   id: ID!
   
-  """ sender of the Asset """
+  """ sender of the Module """
   sender: String!
 
   """ Provider of the Module """
