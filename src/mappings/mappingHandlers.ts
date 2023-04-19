@@ -1,7 +1,7 @@
 import { Account, Module, ModuleSnapshot, Asset, AccountModule } from "../types";
 import { CosmosEvent } from "@subql/types-cosmos";
 import { ModuleParams } from "../interfaces/interfaces";
-import { ADDRESSES } from "../utils";
+import { ADDRESSES } from "../enums";
 
 /**
  * Verifies the existence of a module and updates it if it already exists
@@ -31,7 +31,7 @@ export const verifyModule = async (event: CosmosEvent): Promise<void> => {
       // If no existing module was found, create a new one
       if (!existingModule) {
         const moduleParams = { 
-          provider: module.provider, 
+          namespace: module.namespace, 
           name: module.name, 
           version: module.version.version, 
           type, 
@@ -57,8 +57,8 @@ export const verifyModule = async (event: CosmosEvent): Promise<void> => {
     // Log and throw an error if the handler fails.
     logger.error(`Verify Module ${event.msg.tx.hash} Failed: ${e.message}`);
     throw new Error(`Verify Module ${event.msg.tx.hash} Failed: ${e.message}`);
-  };
-};
+  }
+}
 
 
 /**
@@ -74,7 +74,7 @@ export const createModule = async (event: CosmosEvent, moduleParams: ModuleParam
     // Create a new module object with the provided parameters and other data from the Cosmos event.
     const module = Module.create({
       id: `${event.tx.block.block.id}-${event.tx.idx}-${moduleParams.name}`,
-      provider: moduleParams.provider,
+      namespace: moduleParams.namespace,
       sender,
       name: moduleParams.name,
       version: moduleParams.version,
@@ -91,10 +91,10 @@ export const createModule = async (event: CosmosEvent, moduleParams: ModuleParam
     // Log and throw an error if the handler fails.
     logger.error(`Create Module ${event.msg.tx.hash} Failed: ${e.message}`);
     throw new Error(`Create Module ${event.msg.tx.hash} Failed: ${e.message}`);
-  };
+  }
   // Log success message
   logger.info(`Module ${event.msg.tx.hash} successfully saved to db`);
-};
+}
 
 /**
  * Creates a new module snapshot in the database.
@@ -118,7 +118,7 @@ export const createModuleSnapshot = async (event: CosmosEvent): Promise<void> =>
       // Create a new module snapshot object with the provided parameters and other data from the Cosmos event.
       const moduleSnapshot = ModuleSnapshot.create({
         id,
-        provider: module.provider,
+        namespace: module.namespace,
         sender,
         name: module.name,
         version: module.version.version,
@@ -136,10 +136,10 @@ export const createModuleSnapshot = async (event: CosmosEvent): Promise<void> =>
     // Log and throw an error if the handler fails.
     logger.error(`Verify Module ${event.msg.tx.hash} Failed: ${e.message}`);
     throw new Error(`Verify Module ${event.msg.tx.hash} Failed: ${e.message}`);
-  };
+  }
   // Log success message
   logger.info(`Module snapshot ${event.msg.tx.hash} successfully saved to db`);
-};
+}
 
 export const handleAccountEvents = async (event: CosmosEvent): Promise<void> => {
   try {
@@ -169,8 +169,8 @@ export const handleAccountEvents = async (event: CosmosEvent): Promise<void> => 
       admin: abstractEvents.find(attr => attr.key === "admin")?.value,
       description: description && description,
       governanceType: (Object.keys(governance))[0].toLowerCase(),
-      fundsDenom: funds.length ? funds[0].denom : null,
-      fundsAmount: funds.length ? funds[0].amount : null,
+      fundsDenom: funds?.[0]?.denom ?? null,
+      fundsAmount: funds?.[0]?.amount ?? null,
       timestamp: event.msg.block.block.header.time,
       txHash: event.msg.tx.hash,
     });
@@ -210,7 +210,7 @@ export const handleAbstractModuleEvents = async (event: CosmosEvent): Promise<vo
     logger.error(`Abstract Module ${event.msg.tx.hash} Failed: ${e.message}`);
     throw new Error(`Abstract Module ${event.msg.tx.hash} Failed: ${e.message}`);
   }
-};
+}
 
 /**
  * This function handles an asset ANS update event by parsing the decoded message, extracting the relevant information,
@@ -262,7 +262,7 @@ export const handleAssetANSEvents = async (event: CosmosEvent): Promise<void> =>
   }
   // Log success message
   logger.info(JSON.stringify(`Asset ${event.msg.tx.hash} successfully saved to db`));
-};
+}
 
 /**
  * Handles installing a module on an account.
@@ -280,13 +280,13 @@ export const handleModuleEvents = async (event: CosmosEvent): Promise<void> => {
     // If no account is found, exit.
     if (!account) return;
 
-    // Find the module address in the event logs, if it exists.
+    // Find the module address in the event logs, if it exists. Bit hacky here, but it takes the value associated with the attribute key 'module' starting with 'juno'. 
     const moduleAddress = event.log.events.find(event =>
       event.type === "wasm-abstract" && event.attributes.some(attr =>
-        attr.key === "new_module"
+        attr.key === "module"
       )
     )?.attributes.find(attr =>
-      attr.key === "new_module"
+      (attr.key === "module" && attr.value.startsWith('juno'))
     )?.value;
 
     // Extract the module data from the event message.
@@ -297,7 +297,7 @@ export const handleModuleEvents = async (event: CosmosEvent): Promise<void> => {
       id: `${event.tx.block.block.id}-${event.tx.idx}-${moduleAddress}`,
       address: moduleAddress,
       name: module.name,
-      provider: module.provider,
+      namespace: module.namespace,
       version: module.version,
       manager: contract,
       account: account.address,
@@ -318,4 +318,4 @@ export const handleModuleEvents = async (event: CosmosEvent): Promise<void> => {
 
   // Log success message
   logger.info(JSON.stringify(`AccountModule ${event.msg.tx.hash} successfully saved to db`));
-};
+}

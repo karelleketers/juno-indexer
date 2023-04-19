@@ -124,3 +124,35 @@ With this project can try to query with the following code to get a taste of how
 - [Automated Historical State tracking](https://academy.subquery.network/th/run_publish/historical.html)
 - [GraphQL Subscriptions](https://academy.subquery.network/run_publish/subscription.html)
 - [Discord with Technical Support Channel](https://discord.com/invite/subquery)
+
+
+## Changes in files
+
+### 1. Actions 
+
+Make sure to: 
+
+- adjust contractCalls accordingly in manifest file
+
+Example: Replace 
+```
+contractCall: "create_os"
+```
+
+with 
+
+```
+contractCall: "create_account"
+```
+
+- adjust the names in the handlers. Just search for the old action name in the file e.g. "add_modules" and replace with new action name. 
+
+### 2. Contract addresses 
+
+Simply replace the new address in the address enum under the enums directory. 
+
+### 3. Fields 
+
+- adjust the corresponding fields in the graphl schema
+- run yarn codegen
+- fix errors in handlers (note: be wary of interfaces under interfaces directory)

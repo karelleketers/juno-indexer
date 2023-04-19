@@ -32,7 +32,7 @@ network:
 dataSources:
   - kind: cosmos/Runtime
     #142000 is relevant for getting txs pre-account(os) on uni-6
-    startBlock: 702000 # first block of interest on uni-6 (post-account-renaming)
+    startBlock: 990500 # first block of interest on uni-6 (latest abstract update)
     mapping:
       file: "./dist/index.js"
       handlers:

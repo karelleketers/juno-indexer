@@ -1,5 +1,5 @@
 export interface ModuleParams {
-    provider: string
+    namespace: string
     name: string
     version: string
     type: string

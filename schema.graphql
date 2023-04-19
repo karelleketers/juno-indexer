@@ -54,8 +54,8 @@ type Module @entity {
   """ sender of the Module """
   sender: String!
 
-  """ Provider of the Module """
-  provider: String!
+  """ Namespace of the Module """
+  namespace: String!
 
   """ Name of the Module """
   name: String!
@@ -85,8 +85,8 @@ type ModuleSnapshot @entity {
   """ sender of the Module """
   sender: String!
 
-  """ Provider of the Module """
-  provider: String!
+  """ Namespace of the Module """
+  namespace: String!
 
   """ Name of the Module """
   name: String! @index(unique: true)
@@ -119,8 +119,8 @@ type AccountModule @entity {
   """ Name of the module """
   name: String!
 
-  """ Provider of the module """
-  provider: String
+  """ Namespace of the module """
+  namespace: String
 
   """ Version of the module """
   version: String!
