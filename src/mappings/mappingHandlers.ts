@@ -1,4 +1,4 @@
-import { Account, Module, ModuleSnapshot, Asset, AccountModule } from "../types";
+import { Account, Module, ModuleSnapshot, Asset, AccountModule, TransferEvent, ModuleExecution } from "../types";
 import { CosmosEvent } from "@subql/types-cosmos";
 import { ModuleParams } from "../interfaces/interfaces";
 import { ADDRESSES } from "../enums";
@@ -8,7 +8,7 @@ import { ADDRESSES } from "../enums";
  * @param {CosmosEvent} event - The Cosmos event containing information about the module.
  * @returns {Promise<void>} - A promise that resolves when the module has been saved to the database.
  */
-export const verifyModule = async (event: CosmosEvent): Promise<void> => {
+const verifyModule = async (event: CosmosEvent): Promise<void> => {
   try {
     // Extract the modules to add from the event message
     const modulesToAdd = event.msg.msg.decodedMsg.msg.add_modules.modules;
@@ -60,6 +60,14 @@ export const verifyModule = async (event: CosmosEvent): Promise<void> => {
   }
 }
 
+const verifyAddress = async (address: string): Promise<boolean> => {
+  const manager = await Account.getByManager(address);
+  const proxy = await Account.getByProxy(address);
+
+  const verified = manager ?? proxy;
+
+  return !!verified;
+}
 
 /**
  * Creates a new module in the database.
@@ -87,13 +95,15 @@ export const createModule = async (event: CosmosEvent, moduleParams: ModuleParam
 
     // Save the new module to the database.
     await module.save();
+
+    // Log success message
+    logger.info(`Module ${event.msg.tx.hash} successfully saved to db`);
+
   } catch (e) {
     // Log and throw an error if the handler fails.
     logger.error(`Create Module ${event.msg.tx.hash} Failed: ${e.message}`);
     throw new Error(`Create Module ${event.msg.tx.hash} Failed: ${e.message}`);
   }
-  // Log success message
-  logger.info(`Module ${event.msg.tx.hash} successfully saved to db`);
 }
 
 /**
@@ -131,14 +141,15 @@ export const createModuleSnapshot = async (event: CosmosEvent): Promise<void> =>
 
       // Save the new module snapshot to the database.
       await moduleSnapshot.save();
+
+      // Log success message
+      logger.info(`Module snapshot ${event.msg.tx.hash} successfully saved to db`);
     })
   } catch (e) {
     // Log and throw an error if the handler fails.
     logger.error(`Verify Module ${event.msg.tx.hash} Failed: ${e.message}`);
     throw new Error(`Verify Module ${event.msg.tx.hash} Failed: ${e.message}`);
   }
-  // Log success message
-  logger.info(`Module snapshot ${event.msg.tx.hash} successfully saved to db`);
 }
 
 export const handleAccountEvents = async (event: CosmosEvent): Promise<void> => {
@@ -147,7 +158,8 @@ export const handleAccountEvents = async (event: CosmosEvent): Promise<void> => 
     const { sender, contract, msg, funds } = event.msg.msg.decodedMsg;
 
     //only allow events from approved contracts
-    if (!(contract === ADDRESSES.ACCOUNT_FACTORY)) return;
+    //! DON'T BOTHER WITH THIS UNLESS ADDRESSES ARE FIXED, WHICH THEY CURRENTLY ARE NOT AND IT'S PREVENTING THE DB FROM BEING POPULATED. THIS WILL GIVE YOU HEADACHES. I MEAN IT.
+    //if (!(contract === ADDRESSES.ACCOUNT_FACTORY)) return;
 
     // Get the description, governance, and name from the create_account object
     const { description, governance, name } = msg.create_account;
@@ -178,13 +190,13 @@ export const handleAccountEvents = async (event: CosmosEvent): Promise<void> => 
     // Save the Account object to the database
     await account.save();
 
+    // Log success message
+    logger.info(JSON.stringify(`Account ${event.msg.tx.hash} successfully saved to db`));
   } catch (e) {
     // Log and throw an error if the handler fails.
     logger.error(`Execute Account Event ${event.msg.tx.hash} Failed: ${e.message}`);
     throw new Error(`Execute Account Event ${event.msg.tx.hash} Failed: ${e.message}`);
   }
-  // Log success message
-  logger.info(JSON.stringify(`Account ${event.msg.tx.hash} successfully saved to db`));
 }
 
 /**
@@ -198,7 +210,8 @@ export const handleAbstractModuleEvents = async (event: CosmosEvent): Promise<vo
     const { contract } = event.msg.msg.decodedMsg
 
     //only allow events from approved contracts
-    if (!(contract === ADDRESSES.VERSION_CONTROL)) return;
+    //! DON'T BOTHER WITH THIS UNLESS ADDRESSES ARE FIXED, WHICH THEY CURRENTLY ARE NOT AND IT'S PREVENTING THE DB FROM BEING POPULATED. THIS WILL GIVE YOU HEADACHES. I MEAN IT.
+    //if (!(contract === ADDRESSES.VERSION_CONTROL)) return;
 
     // Verify the module before adding it
     await verifyModule(event);
@@ -225,7 +238,8 @@ export const handleAssetANSEvents = async (event: CosmosEvent): Promise<void> =>
     const { sender, contract, msg } = event.msg.msg.decodedMsg;
 
     //only allow events from approved contracts
-    if (!(contract === ADDRESSES.ANS_HOST)) return;
+    //! DON'T BOTHER WITH THIS UNLESS ADDRESSES ARE FIXED, WHICH THEY CURRENTLY ARE NOT AND IT'S PREVENTING THE DB FROM BEING POPULATED. THIS WILL GIVE YOU HEADACHES. I MEAN IT.
+    //if (!(contract === ADDRESSES.ANS_HOST)) return;
 
     // Extract the list of assets to add from the decoded message and loop through each one
     const assetsToAdd = msg.update_asset_addresses.to_add;
@@ -254,14 +268,16 @@ export const handleAssetANSEvents = async (event: CosmosEvent): Promise<void> =>
 
       // Save the asset to the database
       await asset.save();
+
+      // Log success message
+      logger.info(JSON.stringify(`Asset ${event.msg.tx.hash} successfully saved to db`));
     })
   } catch (e) {
     // Log and throw an error if the handler fails.
     logger.error(`Execute ANS Event ${event.msg.tx.hash} Failed: ${e.message}`);
     throw new Error(`Execute ANS Event ${event.msg.tx.hash} Failed: ${e.message}`);
   }
-  // Log success message
-  logger.info(JSON.stringify(`Asset ${event.msg.tx.hash} successfully saved to db`));
+  
 }
 
 /**
@@ -310,12 +326,93 @@ export const handleModuleEvents = async (event: CosmosEvent): Promise<void> => {
     // Save the AccountModule object to the database.
     await accountModule.save();
 
+    // Log success message
+    logger.info(JSON.stringify(`AccountModule ${event.msg.tx.hash} successfully saved to db`));
+
   } catch (e) {
     // Log and throw an error if the handler fails.
     logger.error(`Handle Installed Account Module ${event.msg.tx.hash} Failed: ${e.message}`);
     throw new Error(`Handle Installed Account Module ${event.msg.tx.hash} Failed: ${e.message}`);
   }
+}
 
-  // Log success message
-  logger.info(JSON.stringify(`AccountModule ${event.msg.tx.hash} successfully saved to db`));
+
+/**
+ * Handles any tranfer on an account.
+ * @param {CosmosEvent} event - The Cosmos event object containing data about the transfer.
+ * @return {Promise<void>} - Promise that resolves when the event has been handled.
+ */
+export const handleTransferEvent = async (event: CosmosEvent): Promise<void> => {
+  try {
+  
+    const { contract, msg, sender } = event.msg.msg.decodedMsg;
+    const { height: block, time: timestamp } = event.msg.block.block.header
+    const amount = msg.transfer?.amount ?? 0;
+    const destination = msg.transfer.recipient;
+
+    const senderVerification = await verifyAddress(sender);
+    const destinationVerification = await verifyAddress(destination);
+
+    if (!(senderVerification) && !(destinationVerification)) return;
+
+    // Create a new TransferEvent object with the extracted data.
+    const transferEvent = TransferEvent.create({
+      id: `${event.tx.block.block.id}-${event.tx.idx}-${event.msg.tx.hash}`,
+      token: contract,
+      amount,
+      sender,
+      destination,
+      block,
+      txHash: event.msg.tx.hash,
+      timestamp,
+    });
+
+    // Save the Transfer Event object to the database.
+    await transferEvent.save();
+
+    // Log success message
+    logger.info(JSON.stringify(`TransferEvent ${event.msg.tx.hash} successfully saved to db`));
+
+  } catch (e) {
+    // Log and throw an error if the handler fails.
+    logger.error(`Handle Transfer Event ${event.msg.tx.hash} Failed: ${e.message}`);
+    throw new Error(`Handle Transfer Event ${event.msg.tx.hash} Failed: ${e.message}`);
+  }
+}
+
+/**
+ * Handles any execution on an Abstract Module.
+ * @param {CosmosEvent} event - The Cosmos event object containing data about the transfer.
+ * @return {Promise<void>} - Promise that resolves when the event has been handled.
+ */
+export const handleExecOnModuleEvent = async (event: CosmosEvent): Promise<void> => {
+  try {
+  
+    const { contract, msg } = event.msg.msg.decodedMsg;
+    const moduleId = msg.exec_on_module.exec_msg.module_id;
+
+    const verification = await verifyAddress(contract);
+
+    if (!verification) return;
+
+    // Create a new TransferEvent object with the extracted data.
+    const moduleExecution = ModuleExecution.create({
+      id: `${event.tx.block.block.id}-${event.tx.idx}-${event.msg.tx.hash}`,
+      address: contract,
+      moduleId,
+      txHash: event.msg.tx.hash,
+      timestamp: event.msg.block.block.header.time,
+    });
+
+    // Save the Module Execution object to the database.
+    await moduleExecution.save();
+    
+    //  Log success message
+    logger.info(JSON.stringify(`ModuleExecutionEvent ${event.msg.tx.hash} successfully saved to db`));
+
+  } catch (e) {
+    // Log and throw an error if the handler fails.
+    logger.error(`Handle Module Execution Event ${event.msg.tx.hash} Failed: ${e.message}`);
+    throw new Error(`Handle Module Execution Event ${event.msg.tx.hash} Failed: ${e.message}`);
+  }
 }

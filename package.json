@@ -4,6 +4,7 @@
   "description": "This project indexes abstract-related events and stores them to a database.",
   "main": "dist/index.js",
   "scripts": {
+    "start": "node dist/index.js",
     "build": "subql build",
     "codegen": "subql codegen",
     "start:docker": "docker-compose pull && docker-compose up --remove-orphans",

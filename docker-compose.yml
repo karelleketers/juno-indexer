@@ -5,6 +5,7 @@ services:
     build:
       context: .
       dockerfile: ./docker/pg-Dockerfile
+    image: ellarino/subquery:postgres
     ports:
       - 5432:5432
     volumes:
@@ -16,9 +17,8 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-
   subquery-node-cosmos:
-    image: onfinality/subql-node-cosmos:latest
+    image: ellarino/subquery:subql
     depends_on:
       "postgres":
         condition: service_healthy
@@ -34,18 +34,13 @@ services:
     command:
       - -f=/app/project.yaml
       - --db-schema=app
+      - --unsafe
       - --disable-historical=true
 
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://subquery-node-juno:3000/ready"]
-      interval: 3s
-      timeout: 5s
-      retries: 10
-
   graphql-engine:
-    image: onfinality/subql-query:latest
+    image: ellarino/subquery:graphql
     ports:
-      - 3001:3000
+      - 3000:3000
     depends_on:
       "postgres":
         condition: service_healthy

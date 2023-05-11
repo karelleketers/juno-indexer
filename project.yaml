@@ -31,7 +31,6 @@ network:
   #     - "MsgUnjail"
 dataSources:
   - kind: cosmos/Runtime
-    #142000 is relevant for getting txs pre-account(os) on uni-6
     startBlock: 990500 # first block of interest on uni-6 (latest abstract update)
     mapping:
       file: "./dist/index.js"
@@ -65,3 +64,17 @@ dataSources:
             messageFilter:
               type: "/cosmwasm.wasm.v1.MsgExecuteContract"
               contractCall: "install_module"
+        - handler: handleTransferEvent
+          kind: cosmos/EventHandler
+          filter:
+            type: execute
+            messageFilter:
+              type: "/cosmwasm.wasm.v1.MsgExecuteContract"
+              contractCall: "transfer"
+        - handler: handleExecOnModuleEvent
+          kind: cosmos/EventHandler
+          filter:
+            type: execute
+            messageFilter:
+              type: "/cosmwasm.wasm.v1.MsgExecuteContract"
+              contractCall: "exec_on_module"

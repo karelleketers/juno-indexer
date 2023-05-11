@@ -21,7 +21,7 @@ type Account @entity {
   manager: String! @index(unique: true)
 
   """ Proxy of Account """
-  proxy: String!
+  proxy: String! @index(unique: true)
 
   """ Admin of Account """
   admin: String!
@@ -180,4 +180,51 @@ type Contract @entity {
 
   """ Timestamp of Block when Contract was named """
   timestamp: String!
+}
+
+type TransferEvent @entity {
+  id: ID!
+
+  """ Token Address """
+  token: String!
+
+  #TODO: BigDecimal Custom Scalar
+  """ Quantity of tokens transferred """
+  amount: String!
+
+  #Bytes
+  """ Transaction sender address """
+  sender: String!
+
+  #Bytes
+  """ Address of destination account"""
+  destination: String!
+
+  #BigInt
+  """ Block number/ Block Height """
+  block: Int!
+
+  """ Transaction Hash """
+  txHash: String!
+
+  """ Timestamp of Block when Asset was named """
+  timestamp: String!
+  
+}
+
+type ModuleExecution @entity {
+  id: ID!
+
+  """ Contract Address """
+  address: String!
+
+  """ Id of Module """
+  moduleId: String!
+
+  """ Transaction Hash """
+  txHash: String!
+
+  """ Timestamp of Block when Asset was named """
+  timestamp: String!
+  
 }
